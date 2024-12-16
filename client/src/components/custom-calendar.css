@@ -1,0 +1,27 @@
+.react-calendar {
+  border: none;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.react-calendar__tile {
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.react-calendar__tile:active,
+.react-calendar__tile:focus {
+  background-color: #e2e2e2;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #c6c6c6;
+}
+
+.react-calendar__navigation button {
+  color: #b20065;
+}
+
+.react-calendar__navigation button:enabled:hover {
+  background-color: #f1f1f1;
+}

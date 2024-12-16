@@ -1,0 +1,374 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  BEAUTICIAN
+  ADMIN
+}
+
+enum OrderStatus {
+  CONFIRMED
+  PENDING
+  CANCELLED
+  SHIPPED
+  DELIVERED
+  REFUNDED
+}
+
+enum AppointmentStatus {
+  PENDING
+  RESERVED
+  CANCELLED
+  FINISHED
+}
+
+enum VerificationStatus {
+  NOT_SUBMITTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum TimeSlot {
+  SLOT_1_8AM_9AM
+  SLOT_2_9AM_10AM
+  SLOT_3_10AM_11AM
+  SLOT_4_11AM_12PM
+  SLOT_5_1PM_2PM
+  SLOT_6_2PM_3PM
+  SLOT_7_3PM_4PM
+  SLOT_8_4PM_5PM
+  SLOT_9_5PM_6PM
+}
+
+enum PaymentType {
+  ONLINE
+  OFFLINE
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  phoneNumber   String    @unique
+  firstName     String
+  lastName      String
+  password      String
+  profileImage  String?
+  emailVerified DateTime?
+  role          Role      @default(CLIENT)
+  isDeleted     Boolean   @default(false)
+
+  orders        Order[]
+  addresses     Address[]
+  reviews       Review[]
+  carts         Cart[]
+  appointments  Appointment[]
+  payments      Payment[]
+  beautician    Beautician?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+}
+
+model Beautician {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  branch      String?
+  resume      String?
+  qr         String?
+  currentSalary Float @default(50000)
+  isApproved     VerificationStatus   @default(NOT_SUBMITTED)
+  
+
+  service     BeauticianService[]
+  leaves      Leaves[]
+
+  user        User      @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  PayedSalary PayedSalary[]
+
+  Attendence Attendance[]
+}
+
+model VerificationCodes {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  email     String    @unique
+  expires   DateTime
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+}
+
+model PasswordResetCode {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  email     String    @unique
+  expires   DateTime
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  productCode String    @unique
+  orderID     String?
+  cartID      String?
+  name        String
+  description String   @db.VarChar(500)
+  price       Float
+  stock       Int
+  isDeleted      Boolean   @default(false)
+
+  reviews     Review[]
+  carts       Cart[]
+  images      ProductImages[]
+  orders      OrderItem[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ProductImages{
+  id  String @id @default(uuid())
+  productId String
+  image String
+  product Product @relation(fields: [productId] , references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Order {
+  id          String    @id @default(uuid())
+  userId      String
+  addressId   String
+  total       Float
+  status      OrderStatus @default(PENDING)
+  tracking    String?
+
+  products    OrderItem[]
+  payments    Payment[]
+  user        User      @relation(fields: [userId], references: [id])
+  address     Address   @relation(fields: [addressId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model OrderItem {
+  id          String    @id @default(uuid())
+  orderId     String
+  productId   String
+  quantity    Int
+
+  order       Order     @relation(fields: [orderId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id])
+  review      Review?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Address {
+  id          String    @id @default(uuid())
+  userId      String
+  address     String
+  street      String
+  city        String
+  state       String
+  zipCode     String
+
+  orders      Order[]
+  user        User      @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Review {
+  id          String    @id @default(uuid())
+  userId      String
+  productId   String?
+  appointmentId   String?
+  orderItemId String?    @unique
+  rating      Int
+  comment     String      @db.VarChar(500)
+
+  user        User      @relation(fields: [userId], references: [id])
+  product     Product?   @relation(fields: [productId], references: [id])
+  appointment     Appointment?   @relation(fields: [appointmentId], references: [id])
+  orderItem   OrderItem? @relation(fields: [orderItemId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Cart {
+  id          String    @id @default(uuid())
+  userId      String
+  productId   String
+
+  product     Product   @relation(fields: [productId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Appointment {
+  id          String    @id @default(uuid())
+  userId      String
+  serviceId   String
+  date        DateTime
+  timeSlot    TimeSlot
+  status      AppointmentStatus @default(PENDING)
+
+  payments    Payment[]
+  reviews     Review[]
+
+  user        User      @relation(fields: [userId], references: [id])
+  service     BeauticianService   @relation(fields: [serviceId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Service {
+  id          String    @id @default(uuid())
+  name        String
+  description String  @db.VarChar(500)
+  price       Float
+  isDeleted      Boolean   @default(false)
+
+  service BeauticianService[]
+  packages PackageServices[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model BeauticianService{
+  id String @id @default(uuid())
+  beauticianId String
+  serviceId String
+
+  appointments Appointment[]
+  beautician Beautician @relation(fields: [beauticianId] , references: [id])
+  service Service @relation(fields: [serviceId] , references: [id])
+
+}
+
+model Payment {
+  id          String    @id @default(uuid())
+  userId      String
+  orderId     String?
+  appointmentId String?
+  amount      Float
+  status      OrderStatus @default(CONFIRMED)
+  type PaymentType @default(ONLINE)
+
+  user        User      @relation(fields: [userId], references: [id])
+  order       Order?     @relation(fields: [orderId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Packages {
+  id                    String    @id @default(uuid())
+  name                  String
+  description           String    @db.VarChar(500)
+  normalPrice           Float
+  discountedPrice       Float
+  isDeleted             Boolean   @default(false)
+
+  branches              PackageBranches[]
+  services              PackageServices[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model PackageBranches {
+  id                    String    @id @default(uuid())
+  packageId             String
+  branch                String
+
+  package               Packages @relation(fields: [packageId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model PackageServices {
+  id                    String    @id @default(uuid())
+  packageId             String
+  serviceId             String
+
+  package               Packages @relation(fields: [packageId], references: [id])
+  service               Service @relation(fields: [serviceId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Leaves {
+  id                    String    @id @default(uuid())
+  beauticianId          String
+  startDate             DateTime
+  endDate               DateTime
+  status               LeaveStatus @default(PENDING)
+  reason                String
+
+  beautician            Beautician @relation(fields: [beauticianId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model PayedSalary {
+  id                    String    @id @default(uuid())
+  beauticianId          String
+  month                 String
+  year                  String
+  amount                Float
+
+  beautician            Beautician @relation(fields: [beauticianId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Attendance {
+  id                    String    @id @default(uuid())
+  beauticianId          String
+  date                  String
+  enterTime             String
+  leaveTime             String?
+
+  beautician            Beautician @relation(fields: [beauticianId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

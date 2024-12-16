@@ -1,0 +1,73 @@
+[
+    {
+      "item_id": 1,
+      "item_name": "Revitalizing Face Serum",
+      "cover_image": "https://image.made-in-china.com/202f0j00cjHkohusZLqY/Revitalizing-Face-Serum-for-Youthful-Glow-Skin-Care-Whitening-Facial-Essence.webp",
+      "description": "A rejuvenating face serum that helps to hydrate and revitalize your skin.",
+      "price": 29.99
+    },
+    {
+      "item_id": 2,
+      "item_name": "Hydrating Lip Balm",
+      "cover_image": "https://example.com/images/lip_balm.jpg",
+      "description": "A nourishing lip balm that keeps your lips soft and hydrated all day.",
+      "price": 7.99
+    },
+    {
+      "item_id": 3,
+      "item_name": "Volumizing Mascara",
+      "cover_image": "https://example.com/images/mascara.jpg",
+      "description": "A volumizing mascara that adds length and volume to your lashes.",
+      "price": 19.99
+    },
+    {
+      "item_id": 4,
+      "item_name": "Brightening Eye Cream",
+      "cover_image": "https://example.com/images/eye_cream.jpg",
+      "description": "An eye cream that reduces dark circles and brightens the under-eye area.",
+      "price": 24.99
+    },
+    {
+      "item_id": 5,
+      "item_name": "Smoothing Hair Oil",
+      "cover_image": "https://example.com/images/hair_oil.jpg",
+      "description": "A hair oil that smooths frizz and adds shine to your hair.",
+      "price": 15.99
+    },
+    {
+      "item_id": 6,
+      "item_name": "Gentle Cleansing Foam",
+      "cover_image": "https://example.com/images/cleansing_foam.jpg",
+      "description": "A gentle cleansing foam that removes impurities without drying your skin.",
+      "price": 12.99
+    },
+    {
+      "item_id": 7,
+      "item_name": "Moisturizing Body Lotion",
+      "cover_image": "https://example.com/images/body_lotion.jpg",
+      "description": "A rich body lotion that deeply moisturizes and nourishes your skin.",
+      "price": 18.99
+    },
+    {
+      "item_id": 8,
+      "item_name": "Exfoliating Face Scrub",
+      "cover_image": "https://example.com/images/face_scrub.jpg",
+      "description": "An exfoliating face scrub that removes dead skin cells and unclogs pores.",
+      "price": 14.99
+    },
+    {
+      "item_id": 9,
+      "item_name": "Nourishing Night Cream",
+      "cover_image": "https://example.com/images/night_cream.jpg",
+      "description": "A nourishing night cream that helps to repair and regenerate your skin overnight.",
+      "price": 32.99
+    },
+    {
+      "item_id": 10,
+      "item_name": "Protective Sunscreen SPF 50",
+      "cover_image": "https://example.com/images/sunscreen.jpg",
+      "description": "A lightweight sunscreen with SPF 50 that protects your skin from harmful UV rays.",
+      "price": 22.99
+    }
+  ]
+  
